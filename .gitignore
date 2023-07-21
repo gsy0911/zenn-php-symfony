@@ -1,0 +1,10 @@
+# OSX
+*DS_Store
+
+# IDE
+.idea
+.vscode
+
+# docker local volumes
+volumes/mysql/
+volumes/redis/

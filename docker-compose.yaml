@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  
+  php:
+    build:
+      context: docker/php
+    container_name: zenn-php-symfony
+    restart: unless-stopped
+    volumes:
+      - ./backend/src:/var/www/zenn_example
+    healthcheck:
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+
+  nginx:
+    build:
+      context: docker/nginx
+    container_name: zenn-nginx-symfony
+    ports:
+      - "8080:80"
+    volumes:
+      - ./backend/src:/var/www/zenn_example
+    depends_on:
+      - php
+
+  mysql:
+    image: mysql:8.0
+    container_name: zenn-mysql-symfony
+    volumes:
+      - ./volumes/mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: zenn_example
+      MYSQL_USER: symfony
+      MYSQL_PASSWORD: symfony
