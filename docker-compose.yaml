@@ -26,13 +26,43 @@ services:
     depends_on:
       - php
 
-  mysql:
-    image: mysql:8.0
-    container_name: zenn-mysql-symfony
+  mysql_master:
+    container_name: mysql_master
+    build:
+      context: ./docker/mysql
+      dockerfile: master.Dockerfile
     volumes:
-      - ./volumes/mysql:/var/lib/mysql
+      - ./volumes/mysql/master:/var/lib/mysql/
+    tty: true
+    ports:
+      - "3002:3306"
+    privileged: true
+    platform: linux/amd64
     environment:
-      MYSQL_ROOT_PASSWORD: secret
-      MYSQL_DATABASE: zenn_example
-      MYSQL_USER: symfony
-      MYSQL_PASSWORD: symfony
+      TZ: 'Asia/Tokyo'
+    logging:
+      driver: json-file
+      options:
+        max-file: '1'
+        max-size: 3m
+
+  mysql_slave:
+    container_name: mysql_slave
+    build:
+      context: ./docker/mysql
+      dockerfile: slave.Dockerfile
+    volumes:
+      - ./volumes/mysql/slave:/var/lib/mysql/
+    tty: true
+    ports:
+      - "3003:3307"
+    platform: linux/amd64
+    depends_on:
+      - mysql_master
+    environment:
+      TZ: 'Asia/Tokyo'
+    logging:
+      driver: json-file
+      options:
+        max-file: '1'
+        max-size: 3m
