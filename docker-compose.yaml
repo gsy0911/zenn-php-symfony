@@ -35,7 +35,7 @@ services:
       - ./volumes/mysql/master:/var/lib/mysql/
     tty: true
     ports:
-      - "3002:3306"
+      - "3306:3306"
     privileged: true
     platform: linux/amd64
     environment:
@@ -55,7 +55,7 @@ services:
       - ./volumes/mysql/slave:/var/lib/mysql/
     tty: true
     ports:
-      - "3003:3307"
+      - "3307:3306"
     platform: linux/amd64
     depends_on:
       - mysql_master
