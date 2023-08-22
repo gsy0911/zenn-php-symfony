@@ -10,6 +10,7 @@ services:
     volumes:
       - ./backend/src:/var/www/zenn_example
     healthcheck:
+      test: "/api/healthcheck"
       interval: 10s
       timeout: 3s
       retries: 3
