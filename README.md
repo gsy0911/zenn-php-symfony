@@ -5,12 +5,20 @@
 
 # usage
 
-
+```shell
+$ cp ./backend/src/.env ./backend/src/.env.local
 ```
-$ docker compose up
+
+```shell
+$ docker compose up --build
 ```
 
 access `http://localhost:8080/api`
+
+```shell
+# in php-docker
+(php) $ symfony console doctrine:migrations:migrate
+```
 
 # related articles
 
