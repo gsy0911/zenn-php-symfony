@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\BookRepository;
+use App\State\BookProvider;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -15,12 +16,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
+#[ORM\Table(name: 'user', options: ["comment" => 'ユーザテーブル'])]
+//#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[ApiResource(
     operations: [
         new Get(),
         new GetCollection(),
         new Post(denormalizationContext: ['groups' => ['post']]),
-        new Patch(denormalizationContext: ['groups' => ['patch']]),
+        new Patch(denormalizationContext: ['groups' => ['patch']], provider: BookProvider::class),
         new Delete(),
     ],
     normalizationContext: ['groups' => ['get']],
