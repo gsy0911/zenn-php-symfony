@@ -59,6 +59,31 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
     normalizationContext: ['groups' => ['book:get']],
 )]
+#[ApiResource(
+    uriTemplate: "/authors/{authorId}/books/{bookId}",
+    operations: [
+        new Get(
+            openapiContext: [
+                'summary' => "Retrieves the collection of Book resource related to the {authorId}",
+                'description' => "Retrieves the collection of Book resource related to the {authorId}",
+            ]
+        ),
+        new Patch(
+            openapiContext: [
+                'summary' => "Update the Book resource related to the {authorId}",
+                'description' => "Update the Book resource related to the {authorId}",
+            ],
+            denormalizationContext: [
+                "group" => ["book:patch"]
+            ],
+        ),
+    ],
+    uriVariables: [
+        'authorId' => new Link(toProperty: 'author', fromClass: Author::class),
+        'bookId' => new Link(fromClass: Book::class),
+    ],
+    normalizationContext: ['groups' => ['book:get']],
+)]
 class Book
 {
     #[ORM\Id]
@@ -76,8 +101,6 @@ class Book
     #[Assert\NotBlank(message: 'タイトルを指定してください')]
     private ?string $title = null;
 
-//    #[ORM\ManyToMany(targetEntity: Author::class, inversedBy: "books")]
-//    #[Link(toProperty: 'books')]
     #[ORM\ManyToOne(targetEntity: Author::class)]
     private ?Author $author = null;
 

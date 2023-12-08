@@ -31,9 +31,8 @@ class Author
 
     /** @var Book[] */
     #[Groups(['get'])]
-//    #[ORM\ManyToMany(targetEntity: Book::class, mappedBy: "author")]
-//    #[ORM\ManyToOne(targetEntity: Book::class)]
-    #[Link(toProperty: 'author')]
+    #[ORM\OneToMany(mappedBy: "author", targetEntity: Book::class)]
+    // #[Link(toProperty: 'author')]
     private $books = [];
 
     #[ORM\Column(nullable: true, options: ["comment" => '削除日時'])]
