@@ -104,6 +104,10 @@ class Book
     #[ORM\ManyToOne(targetEntity: Author::class)]
     private ?Author $author = null;
 
+    /** @var User[] */
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: "books")]
+    private $user = [];
+
     #[ORM\Column(nullable: true, options: ["comment" => '削除日時'])]
     private ?\DateTimeImmutable $deletedAt = null;
 
@@ -158,6 +162,23 @@ class Book
         return $this;
     }
 
+    /** @var User[] */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    public function addUser(User $user): static
+    {
+        $this->user[] = $user;
+//        array_push(, $book);
+        return $this;
+    }
+
+//    public function setUser(User $user): static
+//    {
+//        return $this;
+//    }
     public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
