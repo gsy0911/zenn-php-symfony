@@ -1,0 +1,35 @@
+version: '3'
+
+
+tasks:
+  db-init:
+    desc: initialize database
+    cmds:
+      - docker-compose exec {{.PHP_CONTAINER}} sh -c "php bin/console doctrine:database:drop --force"
+      - docker-compose exec {{.PHP_CONTAINER}} sh -c "php bin/console doctrine:database:create"
+
+  make-migrate:
+    desc: database migrate
+    cmds:
+      - docker-compose exec {{.PHP_CONTAINER}} sh -c "symfony console make:migration"
+
+  db-migrate:
+    desc: database migrate
+    cmds:
+      - docker-compose exec {{.PHP_CONTAINER}} sh -c "php bin/console doctrine:migrations:migrate --conn=default"
+
+  db-load:
+    desc: database load
+    cmds:
+      - docker-compose exec {{.PHP_CONTAINER}} sh -c "php bin/console doctrine:fixtures:load"
+
+  openapi:
+    desc: open swagger
+    cmds:
+      - open "http://localhost:8080/api"
+
+  refresh:
+    desc: API Platform reload
+    cmds:
+      - docker-compose exec {{.PHP_CONTAINER}} sh -c "php bin/console cache:clear"
+

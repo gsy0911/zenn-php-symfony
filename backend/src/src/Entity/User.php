@@ -19,6 +19,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
 
+//Userのエンティティだけエラーが出るの、な〜ぜなぜ？
+//mappedByとinversedByの差異な気がする。そこを理解すれば良いかな？
+
 #[ORM\Entity(repositoryClass: AuthorRepository::class)]
 #[ORM\Table(name: 'user', options: ["comment" => '利用者テーブル'])]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
@@ -27,7 +30,7 @@ use Doctrine\Common\Collections\ArrayCollection;
         new Get(),
         new GetCollection(),
         new Post(),
-        new Patch(provider: UserProvider::class),
+        new Patch(),
         new Delete(),
     ]
 )]
@@ -36,7 +39,8 @@ use Doctrine\Common\Collections\ArrayCollection;
     operations: [
         new Post(
             denormalizationContext: ["group" => ["user-book:post"]],
-            provider: UserProvider::class,
+//            provider: UserProvider::class,
+            read: false,
             processor: UserBookProcessor::class
         ),
         new Delete(provider: UserProvider::class),
@@ -61,7 +65,7 @@ class User
     /** @var Book[] */
     #[Groups(['get'])]
     #[ORM\ManyToMany(targetEntity: Book::class, mappedBy: "user")]
-    private array|ArrayCollection $books;
+    private $books = null;
 
     #[ORM\Column(nullable: true, options: ["comment" => '削除日時'])]
     private ?DateTimeImmutable $deletedAt = null;
@@ -94,7 +98,7 @@ class User
     }
 
     /** @return Book[] */
-    public function getBook(): array
+    public function getBook()
     {
         return $this->books;
     }

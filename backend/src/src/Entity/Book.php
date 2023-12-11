@@ -14,6 +14,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -102,8 +103,8 @@ class Book
     #[Assert\NotBlank(message: 'タイトルを指定してください')]
     private ?string $title = null;
 
-    #[ORM\ManyToOne(targetEntity: Author::class)]
-    private ?Author $author = null;
+//    #[ORM\ManyToOne(targetEntity: Author::class)]
+//    private ?Author $author = null;
 
     /** @var User[] */
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: "books")]
@@ -150,18 +151,17 @@ class Book
         return $this;
     }
 
-
-    public function getAuthor(): ?Author
-    {
-        return $this->author;
-    }
-
-    public function setAuthor(Author $author): static
-    {
-        $this->author = $author;
-
-        return $this;
-    }
+//    public function getAuthor(): ?Author
+//    {
+//        return $this->author;
+//    }
+//
+//    public function setAuthor(Author $author): static
+//    {
+//        $this->author = $author;
+//
+//        return $this;
+//    }
 
     /** @return User[] */
     public function getUser(): array

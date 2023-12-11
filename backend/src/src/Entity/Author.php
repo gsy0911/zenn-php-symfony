@@ -8,6 +8,7 @@ use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -32,9 +33,9 @@ class Author
 
     /** @var Book[] */
     #[Groups(['get'])]
-    #[ORM\OneToMany(mappedBy: "author", targetEntity: Book::class)]
+//    #[ORM\OneToMany(mappedBy: "author", targetEntity: Book::class)]
     // #[Link(toProperty: 'author')]
-    private array $books = [];
+    private $books;
 
     #[ORM\Column(nullable: true, options: ["comment" => '削除日時'])]
     private ?DateTimeImmutable $deletedAt = null;
@@ -48,6 +49,13 @@ class Author
     #[ORM\Column(options: [ 'comment' => '更新日時' ])]
     #[Gedmo\Timestampable(on: 'update')]
     private ?DateTimeImmutable $updatedAt = null;
+
+    public function __construct()
+    {
+        // @see: https://www.doctrine-project.org/projects/doctrine-orm/en/2.17/reference/working-with-associations.html
+        // @see: https://symfonycasts.com/screencast/collections/many-to-many-inverse
+        $this->books = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {

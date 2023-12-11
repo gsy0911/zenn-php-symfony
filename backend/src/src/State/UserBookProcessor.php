@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Repository\UserRepository;
 use App\Repository\BookRepository;
+use App\Service\UserIdService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -14,7 +15,9 @@ readonly class UserBookProcessor implements ProcessorInterface
 {
     public function __construct(
         private BookRepository $bookRepository,
+        private UserRepository $userRepository,
         private EntityManagerInterface $entityManager,
+        private UserIdService $userIdService,
         private LoggerInterface $logger,
     )
     {
@@ -32,8 +35,22 @@ readonly class UserBookProcessor implements ProcessorInterface
             $this->logger->info($book->getTitle());
             $this->logger->info($data->getName());
             $this->logger->info($data->getBook()[0]->getTitle());
-            $this->entityManager->persist($data);
-            $this->entityManager->persist($book);
+//            $this->entityManager->persist($data);
+//            $this->entityManager->persist($book);
+            $this->entityManager->flush();
+        } else {
+            $this->logger->info($this->userIdService->getUserId());
+            $qb = $this->userRepository->createQueryBuilder('user')
+                ->leftJoin('user.books', 'b')
+                ->andWhere('user.id = :userId')
+                ->setParameter('userId', $this->userIdService->getUserId())
+                ->getQuery()
+            ;
+            $user = $qb->getResult();
+
+            $book = $this->bookRepository->find($uriVariables['bookId']);
+            $user->addBook($book);
+            $book->addUser($data);
             $this->entityManager->flush();
         }
         // Handle the state

@@ -1,0 +1,17 @@
+version: '3'
+
+
+includes:
+  local: ./taskfile.local.yml
+
+vars:
+  PHP_CONTAINER: "php"
+  env: '{{.env | default "dev"}}'
+
+
+tasks:
+  default:
+    desc: list commands
+    cmds:
+      - task -l --sort none
+    silent: true
