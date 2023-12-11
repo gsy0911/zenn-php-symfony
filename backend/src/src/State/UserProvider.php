@@ -24,15 +24,16 @@ readonly class UserProvider implements ProviderInterface
     {
         $this->logger->info(http_build_query($uriVariables));
         $this->logger->info(http_build_query($context));
-        $this->logger->info($this->userIdService->getUserId());
-        $qb = $this->userRepository->createQueryBuilder('user')
-            ->leftJoin('user.books', 'b')
-            ->andWhere('user.id = :userId')
-            ->setParameter('userId', $this->userIdService->getUserId())
-            ->getQuery()
-        ;
-
+        $this->logger->info("hello!!!");
+//        $this->logger->info($this->userIdService->getUserId());
+//        $qb = $this->userRepository->createQueryBuilder('user')
+//            ->leftJoin('user.books', 'b')
+//            ->andWhere('user.id = :userId')
+//            ->setParameter('userId', $this->userIdService->getUserId())
+//            ->getQuery()
+//        ;
         // Retrieve the state from somewhere
-        return $qb->getResult();
+//        return $qb->getResult();
+        return $this->userRepository->find($this->userIdService->getUserId());
     }
 }

@@ -24,7 +24,6 @@ readonly class BookProcessor implements ProcessorInterface
     {
         if ($data instanceof Book) {
             $author = $this->authorRepository->find($uriVariables['authorId']);
-            $data->setAuthor($author);
             $this->logger->info($author->getName());
             $this->logger->info($author->getId());
             $this->logger->info($data->getTitle());

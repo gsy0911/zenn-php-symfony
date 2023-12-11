@@ -3,17 +3,13 @@
 namespace App\State;
 
 use App\Entity\Book;
-use App\Repository\BookRepository;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
-use Psr\Log\LoggerInterface;
 
 
 readonly class EmptyBookProvider implements ProviderInterface
 {
     public function __construct(
-        private BookRepository $bookRepository,
-        private LoggerInterface $logger,
     )
     {
     }

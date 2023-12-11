@@ -5,7 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\Link;
 use App\State\UserProvider;
 use App\State\UserBookProcessor;
-use App\Repository\AuthorRepository;
+use App\Repository\UserRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
@@ -18,29 +18,33 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
-//Userのエンティティだけエラーが出るの、な〜ぜなぜ？
-//mappedByとinversedByの差異な気がする。そこを理解すれば良いかな？
-
-#[ORM\Entity(repositoryClass: AuthorRepository::class)]
+#[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'user', options: ["comment" => '利用者テーブル'])]
 #[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
 #[ApiResource(
     operations: [
         new Get(),
         new GetCollection(),
-        new Post(),
-        new Patch(),
+        new Post(
+            normalizationContext: ["groups" => ["user:get"]],
+            denormalizationContext: ["groups" => ["user:post"]]
+        ),
+        new Patch(
+            normalizationContext: ["groups" => ["user:get"]],
+            denormalizationContext: ["groups" => ["user:patch"]],
+        ),
         new Delete(),
-    ]
+    ],
+    normalizationContext: ["groups" => ["user:get"]]
 )]
 #[ApiResource(
     uriTemplate: "/users/books/{bookId}",
     operations: [
         new Post(
-            denormalizationContext: ["group" => ["user-book:post"]],
-//            provider: UserProvider::class,
-            read: false,
+            denormalizationContext: ["groups" => ["user-book:post"]],
+            provider: UserProvider::class,
             processor: UserBookProcessor::class
         ),
         new Delete(provider: UserProvider::class),
@@ -48,34 +52,37 @@ use Doctrine\Common\Collections\ArrayCollection;
     uriVariables: [
         'bookId' => new Link(fromClass: Book::class),
     ],
+    normalizationContext: ["groups" => ["user:get"]]
 )]
 class User
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['get'])]
+    #[Groups(groups: ['user:get', "user:patch"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['get', 'post', 'patch'])]
+    #[Groups(groups: ['user:get', 'user:post', 'user:patch'])]
     #[Assert\NotBlank(message: '名前を指定してください')]
     private ?string $name = null;
 
-    /** @var Book[] */
-    #[Groups(['get'])]
-    #[ORM\ManyToMany(targetEntity: Book::class, mappedBy: "user")]
-    private $books = null;
+    /**
+     * @var Collection
+     */
+    #[Groups(groups: ["user:get"])]
+    #[ORM\ManyToMany(targetEntity: Book::class, mappedBy: "users")]
+    private Collection $books;
 
     #[ORM\Column(nullable: true, options: ["comment" => '削除日時'])]
     private ?DateTimeImmutable $deletedAt = null;
 
-    #[Groups(['get'])]
+    #[Groups(['user:get'])]
     #[ORM\Column(updatable: false, options: [ 'comment' => '作成日時' ])]
     #[Gedmo\Timestampable(on: 'create')]
     private ?DateTimeImmutable $createdAt = null;
 
-    #[Groups(['get'])]
+    #[Groups(['user:get'])]
     #[ORM\Column(options: [ 'comment' => '更新日時' ])]
     #[Gedmo\Timestampable(on: 'update')]
     private ?DateTimeImmutable $updatedAt = null;
@@ -97,21 +104,21 @@ class User
         return $this->name;
     }
 
-    /** @return Book[] */
-    public function getBook()
+    /** @return Collection */
+    public function getBooks(): Collection
     {
         return $this->books;
     }
 
-    public function getCreatedAt(): DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function getUpdatedAt(): DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
+//    public function getCreatedAt(): DateTimeImmutable
+//    {
+//        return $this->createdAt;
+//    }
+//
+//    public function getUpdatedAt(): DateTimeImmutable
+//    {
+//        return $this->updatedAt;
+//    }
 
     public function setName(string $name): static
     {
@@ -119,7 +126,7 @@ class User
         return $this;
     }
 
-    public function addBook(Book $book): static
+    public function addBooks(Book $book): static
     {
         $this->books[] = $book;
         return $this;
