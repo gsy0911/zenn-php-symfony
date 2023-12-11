@@ -12,6 +12,7 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Patch;
+use DateTimeImmutable;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -60,23 +61,25 @@ class User
     /** @var Book[] */
     #[Groups(['get'])]
     #[ORM\ManyToMany(targetEntity: Book::class, mappedBy: "user")]
-    private $books = [];
+    private array|ArrayCollection $books;
 
     #[ORM\Column(nullable: true, options: ["comment" => '削除日時'])]
-    private ?\DateTimeImmutable $deletedAt = null;
+    private ?DateTimeImmutable $deletedAt = null;
 
     #[Groups(['get'])]
     #[ORM\Column(updatable: false, options: [ 'comment' => '作成日時' ])]
     #[Gedmo\Timestampable(on: 'create')]
-    private ?\DateTimeImmutable $createdAt = null;
+    private ?DateTimeImmutable $createdAt = null;
 
     #[Groups(['get'])]
     #[ORM\Column(options: [ 'comment' => '更新日時' ])]
     #[Gedmo\Timestampable(on: 'update')]
-    private ?\DateTimeImmutable $updatedAt = null;
+    private ?DateTimeImmutable $updatedAt = null;
 
     public function __construct()
     {
+        // @see: https://www.doctrine-project.org/projects/doctrine-orm/en/2.17/reference/working-with-associations.html
+        // @see: https://symfonycasts.com/screencast/collections/many-to-many-inverse
         $this->books = new ArrayCollection();
     }
 
@@ -90,17 +93,18 @@ class User
         return $this->name;
     }
 
-    public function getBook()
+    /** @return Book[] */
+    public function getBook(): array
     {
         return $this->books;
     }
 
-    public function getCreatedAt(): \DateTimeImmutable
+    public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function getUpdatedAt(): \DateTimeImmutable
+    public function getUpdatedAt(): DateTimeImmutable
     {
         return $this->updatedAt;
     }
@@ -114,7 +118,6 @@ class User
     public function addBook(Book $book): static
     {
         $this->books[] = $book;
-//        array_push(, $book);
         return $this;
     }
 

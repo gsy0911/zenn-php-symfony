@@ -13,6 +13,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -109,17 +110,17 @@ class Book
     private $user = [];
 
     #[ORM\Column(nullable: true, options: ["comment" => '削除日時'])]
-    private ?\DateTimeImmutable $deletedAt = null;
+    private ?DateTimeImmutable $deletedAt = null;
 
     #[Groups(['book:get'])]
     #[ORM\Column(updatable: false, options: [ 'comment' => '作成日時' ])]
     #[Gedmo\Timestampable(on: 'create')]
-    private ?\DateTimeImmutable $createdAt = null;
+    private ?DateTimeImmutable $createdAt = null;
 
     #[Groups(['book:get'])]
     #[ORM\Column(options: [ 'comment' => '更新日時' ])]
     #[Gedmo\Timestampable(on: 'update')]
-    private ?\DateTimeImmutable $updatedAt = null;
+    private ?DateTimeImmutable $updatedAt = null;
 
     public function getId(): ?int
     {
@@ -162,8 +163,8 @@ class Book
         return $this;
     }
 
-    /** @var User[] */
-    public function getUser()
+    /** @return User[] */
+    public function getUser(): array
     {
         return $this->user;
     }
@@ -175,16 +176,12 @@ class Book
         return $this;
     }
 
-//    public function setUser(User $user): static
-//    {
-//        return $this;
-//    }
-    public function getCreatedAt(): \DateTimeImmutable
+    public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function getUpdatedAt(): \DateTimeImmutable
+    public function getUpdatedAt(): DateTimeImmutable
     {
         return $this->updatedAt;
     }

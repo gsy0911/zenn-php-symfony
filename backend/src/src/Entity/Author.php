@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
+use DateTimeImmutable;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -33,20 +34,20 @@ class Author
     #[Groups(['get'])]
     #[ORM\OneToMany(mappedBy: "author", targetEntity: Book::class)]
     // #[Link(toProperty: 'author')]
-    private $books = [];
+    private array $books = [];
 
     #[ORM\Column(nullable: true, options: ["comment" => '削除日時'])]
-    private ?\DateTimeImmutable $deletedAt = null;
+    private ?DateTimeImmutable $deletedAt = null;
 
     #[Groups(['get'])]
     #[ORM\Column(updatable: false, options: [ 'comment' => '作成日時' ])]
     #[Gedmo\Timestampable(on: 'create')]
-    private ?\DateTimeImmutable $createdAt = null;
+    private ?DateTimeImmutable $createdAt = null;
 
     #[Groups(['get'])]
     #[ORM\Column(options: [ 'comment' => '更新日時' ])]
     #[Gedmo\Timestampable(on: 'update')]
-    private ?\DateTimeImmutable $updatedAt = null;
+    private ?DateTimeImmutable $updatedAt = null;
 
     public function getId(): ?int
     {
@@ -58,17 +59,18 @@ class Author
         return $this->name;
     }
 
-    public function getBook()
+    /** @return Book[] */
+    public function getBook(): array
     {
         return $this->books;
     }
 
-    public function getCreatedAt(): \DateTimeImmutable
+    public function getCreatedAt(): DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function getUpdatedAt(): \DateTimeImmutable
+    public function getUpdatedAt(): DateTimeImmutable
     {
         return $this->updatedAt;
     }
