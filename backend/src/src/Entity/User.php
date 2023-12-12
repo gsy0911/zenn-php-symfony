@@ -34,9 +34,11 @@ use Doctrine\Common\Collections\Collection;
         new Patch(
             normalizationContext: ["groups" => ["user:get"]],
             denormalizationContext: ["groups" => ["user:patch"]],
+            provider: UserProvider::class,
         ),
         new Delete(),
     ],
+    routePrefix: 'v1',
     normalizationContext: ["groups" => ["user:get"]]
 )]
 #[ApiResource(
@@ -52,7 +54,8 @@ use Doctrine\Common\Collections\Collection;
     uriVariables: [
         'bookId' => new Link(fromClass: Book::class),
     ],
-    normalizationContext: ["groups" => ["user:get"]]
+    routePrefix: 'v1',
+    normalizationContext: ["groups" => ["user:get"]],
 )]
 class User
 {
@@ -104,7 +107,7 @@ class User
         return $this->name;
     }
 
-    /** @return Collection */
+    /** @return Collection<Book> */
     public function getBooks(): Collection
     {
         return $this->books;

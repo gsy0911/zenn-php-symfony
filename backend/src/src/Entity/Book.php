@@ -48,7 +48,7 @@ class Book
     #[Assert\NotBlank(message: 'タイトルを指定してください')]
     private string $title;
 
-    /** @var Collection */
+    /** @var Collection<User> */
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: "books")]
     private Collection $users;
 
@@ -101,7 +101,7 @@ class Book
         return $this;
     }
 
-    /** @return Collection */
+    /** @return Collection<User> */
     public function getUsers(): Collection
     {
         return $this->users;
