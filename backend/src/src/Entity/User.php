@@ -50,7 +50,7 @@ use Symfony\Component\Serializer\Annotation\Context;
             provider: UserProvider::class,
             processor: UserBookProcessor::class
         ),
-        new Delete(provider: UserProvider::class),
+        new Delete(provider: UserProvider::class, processor: UserBookProcessor::class),
     ],
     uriVariables: [
         'bookId' => new Link(fromClass: Book::class),
@@ -132,8 +132,16 @@ class User
 
     public function addBooks(Book $book): static
     {
-        $this->books[] = $book;
+        if (!$this->books->contains($book)) {
+            $this->books->add($book);
+        }
         return $this;
     }
 
+    public function removeBook(Book $book): static
+    {
+        $this->books->removeElement($book);
+
+        return $this;
+    }
 }

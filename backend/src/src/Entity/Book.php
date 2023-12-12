@@ -109,9 +109,19 @@ class Book
 
     public function addUser(User $user): static
     {
-        $this->users[] = $user;
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+        }
         return $this;
     }
+
+    public function removeUser(User $user): static
+    {
+        $this->users->removeElement($user);
+
+        return $this;
+    }
+
 
     public function getCreatedAt(): DateTimeImmutable
     {

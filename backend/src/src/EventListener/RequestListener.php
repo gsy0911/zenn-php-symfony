@@ -22,6 +22,6 @@ final readonly class RequestListener
         }
 
         $request = $event->getRequest();
-        $this->userIdService->setUserId(2);
+        $this->userIdService->setUserId(1);
     }
 }

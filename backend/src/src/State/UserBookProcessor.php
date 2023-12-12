@@ -4,6 +4,7 @@ namespace App\State;
 
 use App\Entity\User;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\Metadata\DeleteOperationInterface;
 use ApiPlatform\State\ProcessorInterface;
 use App\Repository\BookRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,18 +24,24 @@ readonly class UserBookProcessor implements ProcessorInterface
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): void
     {
         $this->logger->info("lock!");
-        if ($data instanceof User) {
-            $book = $this->bookRepository->find($uriVariables['bookId']);
-            $data->addBooks($book);
-            $book->addUser($data);
-            $this->logger->info("fire!");
-            $this->logger->info($book->getTitle());
-            $this->logger->info($data->getName());
-            $this->logger->info($data->getId());
-            $this->logger->info($data->getBooks()[0]->getTitle());
-            $this->entityManager->persist($data);
-            $this->entityManager->persist($book);
-            $this->entityManager->flush();
+        if ($operation instanceof DeleteOperationInterface) {
+            if ($data instanceof User) {
+                $book = $this->bookRepository->find($uriVariables['bookId']);
+                $data->removeBook($book);
+                $book->removeUser($data);
+                $this->entityManager->persist($data);
+                $this->entityManager->persist($book);
+                $this->entityManager->flush();
+            }
+        } else {
+            if ($data instanceof User) {
+                $book = $this->bookRepository->find($uriVariables['bookId']);
+                $data->addBooks($book);
+                $book->addUser($data);
+                $this->entityManager->persist($data);
+                $this->entityManager->persist($book);
+                $this->entityManager->flush();
+            }
         }
         // Handle the state
         $this->logger->info("occurred!");
