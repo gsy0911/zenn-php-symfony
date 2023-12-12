@@ -22,10 +22,6 @@ final readonly class RequestListener
         }
 
         $request = $event->getRequest();
-
-        // APIリクエエスト時
-        if (strpos($event->getRequest()->getRequestUri(), '/api/') === 0) {
-            $this->userIdService->setUserId(1);
-        }
+        $this->userIdService->setUserId(2);
     }
 }

@@ -29,6 +29,9 @@ WORKDIR /var/www/zenn_example
 
 # php extensions installer: https://github.com/mlocati/docker-php-extension-installer
 COPY --from=composer /usr/bin/composer /usr/bin/composer
+COPY entrypoint.sh /opt/entrypoint.sh
+#RUN curl -sS https://get.symfony.com/cli/installer | bash
+#RUN mv /root/.symfony5/bin/symfony /usr/local/bin/symfony
 
-RUN curl -sS https://get.symfony.com/cli/installer | bash
-RUN mv /root/.symfony5/bin/symfony /usr/local/bin/symfony
+ENTRYPOINT ["/opt/entrypoint.sh"]
+CMD ["php-fpm"]

@@ -39,12 +39,12 @@ class Book
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['book:get', 'book:post'])]
+    #[Groups(['book:get', 'book:post', "user:get"])]
     #[Assert\NotBlank(message: 'ISBNを指定してください')]
     private string $isbn;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['book:get', 'book:post', 'book:patch'])]
+    #[Groups(['book:get', 'book:post', 'book:patch', "user:get"])]
     #[Assert\NotBlank(message: 'タイトルを指定してください')]
     private string $title;
 
@@ -55,12 +55,12 @@ class Book
     #[ORM\Column(nullable: true, options: ["comment" => '削除日時'])]
     private ?DateTimeImmutable $deletedAt = null;
 
-    #[Groups(['book:get'])]
+    #[Groups(['book:get', "user:get"])]
     #[ORM\Column(updatable: false, options: [ 'comment' => '作成日時' ])]
     #[Gedmo\Timestampable(on: 'create')]
     private ?DateTimeImmutable $createdAt = null;
 
-    #[Groups(['book:get'])]
+    #[Groups(['book:get', "user:get"])]
     #[ORM\Column(options: [ 'comment' => '更新日時' ])]
     #[Gedmo\Timestampable(on: 'update')]
     private ?DateTimeImmutable $updatedAt = null;

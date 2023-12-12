@@ -19,6 +19,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Serializer\Annotation\Context;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'user', options: ["comment" => '利用者テーブル'])]
@@ -38,7 +40,6 @@ use Doctrine\Common\Collections\Collection;
         ),
         new Delete(),
     ],
-    routePrefix: 'v1',
     normalizationContext: ["groups" => ["user:get"]]
 )]
 #[ApiResource(
@@ -54,7 +55,6 @@ use Doctrine\Common\Collections\Collection;
     uriVariables: [
         'bookId' => new Link(fromClass: Book::class),
     ],
-    routePrefix: 'v1',
     normalizationContext: ["groups" => ["user:get"]],
 )]
 class User
@@ -71,9 +71,10 @@ class User
     private ?string $name = null;
 
     /**
-     * @var Collection
+     * @var Collection<Book>
      */
     #[Groups(groups: ["user:get"])]
+    #[MaxDepth(1)]
     #[ORM\ManyToMany(targetEntity: Book::class, mappedBy: "users")]
     private Collection $books;
 
@@ -113,15 +114,15 @@ class User
         return $this->books;
     }
 
-//    public function getCreatedAt(): DateTimeImmutable
-//    {
-//        return $this->createdAt;
-//    }
-//
-//    public function getUpdatedAt(): DateTimeImmutable
-//    {
-//        return $this->updatedAt;
-//    }
+    public function getCreatedAt(): DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function getUpdatedAt(): DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
 
     public function setName(string $name): static
     {
