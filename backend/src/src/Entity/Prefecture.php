@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\PrefectureRepository;
@@ -29,7 +28,7 @@ class Prefecture
     #[ORM\JoinColumn(nullable: false)]
     private ?Region $region = null;
 
-    #[Groups(groups: ['prefecture:get', "region:get"])]
+    #[Groups(groups: ['prefecture:get', "region:get", "user:get"])]
     #[ORM\Column(length: 8, options: ["comment" => '都道府県名'])]
     private ?string $name = null;
 

@@ -65,8 +65,8 @@ class User
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(groups: ['user:get', 'user:post', 'user:patch'])]
     #[Assert\NotBlank(message: '名前を指定してください')]
+    #[Groups(groups: ['user:get', 'user:post', 'user:patch'])]
     private ?string $name = null;
 
     /**
@@ -77,9 +77,9 @@ class User
     #[ORM\ManyToMany(targetEntity: Book::class, mappedBy: "users")]
     private Collection $books;
 
-    #[Groups(groups: ['user:get'])]
     #[ORM\ManyToOne]
     #[Assert\NotBlank(message: '都道府県を選択してください', groups: ['prefecture'])]
+    #[Groups(groups: ['user:get', "user:post", "user:patch"])]
     private ?Prefecture $prefecture = null;
 
     #[ORM\Column(nullable: true, options: ["comment" => '削除日時'])]
@@ -148,4 +148,17 @@ class User
 
         return $this;
     }
+
+    public function getPrefecture(): ?Prefecture
+    {
+        return $this->prefecture;
+    }
+
+    public function setPrefecture(?Prefecture $prefecture): static
+    {
+        $this->prefecture = $prefecture;
+
+        return $this;
+    }
+
 }
