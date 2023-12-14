@@ -15,7 +15,9 @@ class PrefectureDenormalizer implements DenormalizerInterface, DenormalizerAware
 
     private $iriConverter;
 
-    public function __construct(IriConverterInterface $iriConverter)
+    public function __construct(
+        IriConverterInterface $iriConverter,
+    )
     {
         $this->iriConverter = $iriConverter;
     }
@@ -26,7 +28,6 @@ class PrefectureDenormalizer implements DenormalizerInterface, DenormalizerAware
     public function denormalize($data, $type, $format = null, array $context = [])
     {
         $data['prefecture'] = $this->iriConverter->getIriFromResource(resource: Prefecture::class, context: ['uri_variables' => ['id' => $data['prefecture']]]);
-
         return $this->denormalizer->denormalize($data, $type, $format, $context + [__CLASS__ => true]);
     }
 

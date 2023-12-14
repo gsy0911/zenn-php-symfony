@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\Link;
 use App\State\UserProvider;
+use App\State\UserProcessor;
 use App\State\UserBookProcessor;
 use App\Repository\UserRepository;
 use ApiPlatform\Metadata\ApiResource;
@@ -38,23 +39,34 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
             normalizationContext: ["groups" => ["user:get"]],
             denormalizationContext: ["groups" => ["user:patch"]],
             provider: UserProvider::class,
+            processor: UserProcessor::class,
         ),
         new Delete(),
     ],
     normalizationContext: ["groups" => ["user:get"]]
 )]
 #[ApiResource(
-    uriTemplate: "/users/books/{bookId}",
     operations: [
         new Post(
+            uriTemplate: "/users/{id}/books",
+            uriVariables: [
+                'id' => new Link(fromClass: User::class),
+            ],
             denormalizationContext: ["groups" => ["user-book:post"]],
-            provider: UserProvider::class,
-            processor: UserBookProcessor::class
+//            provider: UserProvider::class,
+            processor: UserBookProcessor::class,
         ),
-        new Delete(provider: UserProvider::class, processor: UserBookProcessor::class),
-    ],
-    uriVariables: [
-        'bookId' => new Link(fromClass: Book::class),
+        new Delete(
+            uriTemplate: "/users/{id}/books/{bookId}",
+            uriVariables: [
+                'id' => new Link(fromClass: User::class),
+                'bookId' => new Link(fromClass: Book::class),
+            ],
+            denormalizationContext: ["groups" => ["user-book:delete"]],
+//            provider: UserProvider::class,
+//            processor: UserBookProcessor::class,
+
+        ),
     ],
     normalizationContext: ["groups" => ["user:get"]],
 )]
@@ -74,7 +86,7 @@ class User
     /**
      * @var Collection<Book>
      */
-    #[Groups(groups: ["user:get"])]
+    #[Groups(groups: ["user:get", "user-book:post"])]
     #[MaxDepth(1)]
     #[ORM\ManyToMany(targetEntity: Book::class, mappedBy: "users")]
     private Collection $books;
@@ -138,11 +150,12 @@ class User
         return $this;
     }
 
-    public function addBooks(Book $book): static
+    /**
+     * @param Collection<Book> $book
+     */
+    public function setBooks(Collection $book): static
     {
-        if (!$this->books->contains($book)) {
-            $this->books->add($book);
-        }
+        $this->books = $book;
         return $this;
     }
 
@@ -161,7 +174,6 @@ class User
     public function setPrefecture(?Prefecture $prefecture): static
     {
         $this->prefecture = $prefecture;
-
         return $this;
     }
 
