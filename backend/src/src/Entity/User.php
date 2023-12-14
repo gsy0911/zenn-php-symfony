@@ -20,7 +20,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Serializer\Annotation\Context;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'user', options: ["comment" => '利用者テーブル'])]
@@ -77,6 +76,11 @@ class User
     #[MaxDepth(1)]
     #[ORM\ManyToMany(targetEntity: Book::class, mappedBy: "users")]
     private Collection $books;
+
+    #[Groups(groups: ['user:get'])]
+    #[ORM\ManyToOne]
+    #[Assert\NotBlank(message: '都道府県を選択してください', groups: ['prefecture'])]
+    private ?Prefecture $prefecture = null;
 
     #[ORM\Column(nullable: true, options: ["comment" => '削除日時'])]
     private ?DateTimeImmutable $deletedAt = null;

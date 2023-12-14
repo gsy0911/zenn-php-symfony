@@ -11,7 +11,7 @@ tasks:
   make-migrate:
     desc: database migrate
     cmds:
-      - docker-compose exec {{.PHP_CONTAINER}} sh -c "symfony console make:migration"
+      - docker-compose exec {{.PHP_CONTAINER}} sh -c "php bin/console make:migration"
 
   db-migrate:
     desc: database migrate
@@ -32,4 +32,10 @@ tasks:
     desc: API Platform reload
     cmds:
       - docker-compose exec {{.PHP_CONTAINER}} sh -c "php bin/console cache:clear"
+
+  open:
+    desc: open page via Browser
+    cmds:
+      - open http://localhost:8080/api
+
 
