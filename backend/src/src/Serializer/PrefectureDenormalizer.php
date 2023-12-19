@@ -13,13 +13,11 @@ class PrefectureDenormalizer implements DenormalizerInterface, DenormalizerAware
 {
     use DenormalizerAwareTrait;
 
-    private $iriConverter;
 
     public function __construct(
-        IriConverterInterface $iriConverter,
+        private readonly IriConverterInterface $iriConverter,
     )
     {
-        $this->iriConverter = $iriConverter;
     }
 
     /**

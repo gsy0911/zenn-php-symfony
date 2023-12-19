@@ -15,14 +15,11 @@ class BookDenormalizer implements DenormalizerInterface, DenormalizerAwareInterf
 {
     use DenormalizerAwareTrait;
 
-    private $iriConverter;
-
     public function __construct(
-        IriConverterInterface $iriConverter,
+        private readonly IriConverterInterface $iriConverter,
         private readonly LoggerInterface $logger,
     )
     {
-        $this->iriConverter = $iriConverter;
     }
 
     /**
@@ -31,6 +28,8 @@ class BookDenormalizer implements DenormalizerInterface, DenormalizerAwareInterf
     public function denormalize($data, $type, $format = null, array $context = [])
     {
         // TODO $dataからnormalizerが動くようにする
+        //  現状は、$data["books"]を削除してUserオブジェクトを作成して、複数のBookオブジェクトをあとから追加する形にしている
+        //  それを解決したい
         $books = new ArrayCollection();
         foreach($data['books'] as $index => $bookData) {
             $iri = $this->iriConverter->getIriFromResource(resource: Book::class, context: ['uri_variables' => ['id' => $bookData]]);
