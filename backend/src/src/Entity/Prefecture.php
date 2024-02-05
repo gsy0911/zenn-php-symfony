@@ -17,7 +17,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 class Prefecture
 {
-    #[Groups(['prefecture'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
