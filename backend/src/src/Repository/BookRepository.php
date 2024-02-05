@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Book;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -11,7 +12,6 @@ use Doctrine\Persistence\ManagerRegistry;
  *
  * @method Book|null find($id, $lockMode = null, $lockVersion = null)
  * @method Book|null findOneBy(array $criteria, array $orderBy = null)
- * @method Book[]    findAll()
  * @method Book[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class BookRepository extends ServiceEntityRepository
@@ -21,6 +21,15 @@ class BookRepository extends ServiceEntityRepository
         parent::__construct($registry, Book::class);
     }
 
+    /** @var Collection<Book> */
+    public function findAll()
+    {
+        $queryBuilder = $this->createQueryBuilder('b');
+        return $queryBuilder
+            ->andWhere('b.deletedAt is null')
+            ->getQuery()
+            ->getResult();
+    }
 //    /**
 //     * @return Book[] Returns an array of Book objects
 //     */
