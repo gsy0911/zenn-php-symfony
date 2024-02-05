@@ -25,11 +25,15 @@ use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: 'user', options: ["comment" => '利用者テーブル'])]
-#[Gedmo\SoftDeleteable(fieldName: 'deletedAt', timeAware: false)]
+#[ORM\Table(name: "user", options: ["comment" => "利用者テーブル"])]
+#[Gedmo\SoftDeleteable(fieldName: "deletedAt", timeAware: false)]
 #[ApiResource(
     operations: [
-        new Get(),
+        new Get(
+            normalizationContext: ["groups" => ["user:get"]],
+            denormalizationContext: ["groups" => ["user:get"]],
+            provider: UserProvider::class,
+        ),
         new GetCollection(),
         new Post(
             normalizationContext: ["groups" => ["user:get"]],
@@ -50,7 +54,7 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
         new Post(
             uriTemplate: "/users/{id}/books",
             uriVariables: [
-                'id' => new Link(fromClass: User::class),
+                "id" => new Link(fromClass: User::class),
             ],
             denormalizationContext: ["groups" => ["user-book:post"]],
 //            provider: UserProvider::class,
@@ -59,8 +63,8 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
         new Delete(
             uriTemplate: "/users/{id}/books/{bookId}",
             uriVariables: [
-                'id' => new Link(fromClass: User::class),
-                'bookId' => new Link(fromClass: Book::class),
+                "id" => new Link(fromClass: User::class),
+                "bookId" => new Link(fromClass: Book::class),
             ],
             denormalizationContext: ["groups" => ["user-book:delete"]],
 //            provider: UserProvider::class,
@@ -75,12 +79,12 @@ class User
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(groups: ['user:get', "user:patch"])]
+    #[Groups(groups: ["user:get", "user:patch"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: '名前を指定してください')]
-    #[Groups(groups: ['user:get', 'user:post', 'user:patch'])]
+    #[Assert\NotBlank(message: "名前を指定してください")]
+    #[Groups(groups: ["user:get", "user:post", "user:patch"])]
     private ?string $name = null;
 
     /**
@@ -92,23 +96,23 @@ class User
     private Collection $books;
 
     #[ORM\ManyToOne]
-    #[Assert\NotBlank(message: '都道府県を選択してください', groups: ['prefecture'])]
-    #[Groups(groups: ['user:get', "user:post", "user:patch"])]
+    #[Assert\NotBlank(message: "都道府県を選択してください")]
+    #[Groups(groups: ["user:get", "user:post", "user:patch"])]
     private ?Prefecture $prefecture = null;
 
-    #[ORM\Column(nullable: true, options: ["comment" => '削除日時'])]
+    #[ORM\Column(nullable: true, options: ["comment" => "削除日時"])]
     private ?DateTimeImmutable $deletedAt = null;
 
-    #[Groups(['user:get'])]
-    #[ORM\Column(updatable: false, options: [ 'comment' => '作成日時' ])]
-    #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d'])]
-    #[Gedmo\Timestampable(on: 'create')]
+    #[Groups(groups: ["user:get"])]
+    #[ORM\Column(updatable: false, options: [ "comment" => "作成日時" ])]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => "Y-m-d"])]
+    #[Gedmo\Timestampable(on: "create")]
     private ?DateTimeImmutable $createdAt = null;
 
-    #[Groups(['user:get'])]
-    #[ORM\Column(options: [ 'comment' => '更新日時' ])]
-    #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d'])]
-    #[Gedmo\Timestampable(on: 'update')]
+    #[Groups(groups: ["user:get"])]
+    #[ORM\Column(options: [ "comment" => "更新日時" ])]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => "Y-m-d"])]
+    #[Gedmo\Timestampable(on: "update")]
     private ?DateTimeImmutable $updatedAt = null;
 
     public function __construct()

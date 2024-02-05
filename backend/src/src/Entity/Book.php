@@ -26,7 +26,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     operations: [
         new Get(),
-        new GetCollection(),
+        new GetCollection(provider: BookProvider::class),
         new Post(denormalizationContext: ['groups' => ['book:post']]),
         new Patch(denormalizationContext: ['groups' => ['book:patch']], provider: BookProvider::class),
         new Delete(),

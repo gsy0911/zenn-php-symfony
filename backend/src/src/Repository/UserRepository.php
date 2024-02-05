@@ -36,6 +36,17 @@ class UserRepository extends ServiceEntityRepository
 //        ;
 //    }
 
+    public function findOne(int $id)
+    {
+        $qb = $this->createQueryBuilder('user')
+            ->leftJoin('user.books', 'b')
+            ->andWhere('user.id = :userId')
+            ->setParameter('userId', $id)
+            ->getQuery();
+        // Retrieve the state from somewhere
+        return $qb->getOneOrNullResult();
+    }
+
 //    public function findOneBySomeField($value): ?User
 //    {
 //        return $this->createQueryBuilder('b')
