@@ -34,7 +34,9 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
             denormalizationContext: ["groups" => ["user:get"]],
             provider: UserProvider::class,
         ),
-        new GetCollection(),
+        new GetCollection(
+            provider: UserProvider::class
+        ),
         new Post(
             normalizationContext: ["groups" => ["user:get"]],
             denormalizationContext: ["groups" => ["user:post"]]

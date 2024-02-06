@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -11,7 +12,6 @@ use Doctrine\Persistence\ManagerRegistry;
  *
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
  * @method User|null findOneBy(array $criteria, array $orderBy = null)
- * @method User[]    findAll()
  * @method User[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class UserRepository extends ServiceEntityRepository
@@ -35,12 +35,22 @@ class UserRepository extends ServiceEntityRepository
 //            ->getResult()
 //        ;
 //    }
+    /** @var Collection<User> */
+    public function findAll()
+    {
+        $queryBuilder = $this->createQueryBuilder('u');
+        return $queryBuilder
+            ->andWhere('u.deletedAt is null')
+            ->getQuery()
+            ->getResult();
+    }
 
-    public function findOne(int $id)
+    public function findOneOrNull(int $id)
     {
         $qb = $this->createQueryBuilder('user')
             ->leftJoin('user.books', 'b')
             ->andWhere('user.id = :userId')
+            ->andWhere('user.deletedAt is null')
             ->setParameter('userId', $id)
             ->getQuery();
         // Retrieve the state from somewhere
