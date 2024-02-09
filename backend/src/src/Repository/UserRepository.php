@@ -35,15 +35,15 @@ class UserRepository extends ServiceEntityRepository
 //            ->getResult()
 //        ;
 //    }
-    /** @var Collection<User> */
-    public function findAll()
-    {
-        $queryBuilder = $this->createQueryBuilder('u');
-        return $queryBuilder
-            ->andWhere('u.deletedAt is null')
-            ->getQuery()
-            ->getResult();
-    }
+//    /** @var Collection<User> */
+//    public function findAll()
+//    {
+//        $queryBuilder = $this->createQueryBuilder('u');
+//        return $queryBuilder
+//            ->andWhere('u.deletedAt is null')
+//            ->getQuery()
+//            ->getResult();
+//    }
 
     public function findOneOrNull(int $id)
     {

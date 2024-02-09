@@ -21,15 +21,15 @@ class BookRepository extends ServiceEntityRepository
         parent::__construct($registry, Book::class);
     }
 
-    /** @var Collection<Book> */
-    public function findAll()
-    {
-        $queryBuilder = $this->createQueryBuilder('b');
-        return $queryBuilder
-            ->andWhere('b.deletedAt is null')
-            ->getQuery()
-            ->getResult();
-    }
+//    /** @var Collection<Book> */
+//    public function findAll()
+//    {
+//        $queryBuilder = $this->createQueryBuilder('b');
+//        return $queryBuilder
+//            ->andWhere('b.deletedAt is null')
+//            ->getQuery()
+//            ->getResult();
+//    }
 //    /**
 //     * @return Book[] Returns an array of Book objects
 //     */
