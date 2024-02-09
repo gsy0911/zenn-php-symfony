@@ -1,4 +1,4 @@
-FROM mysql/mysql-server:8.0.28
+FROM mysql/mysql-server:8.0.32
 
 RUN touch /var/log/mysql-general.log
 RUN chown mysql:mysql /var/log/mysql-general.log
