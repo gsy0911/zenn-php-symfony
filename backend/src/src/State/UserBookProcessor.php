@@ -26,19 +26,15 @@ readonly class UserBookProcessor implements ProcessorInterface
 
             if ($data instanceof User) {
                 $book = $this->entityManager->getRepository(Book::class)->find($uriVariables['bookId']);
-                $user = $this->entityManager->getRepository(User::class)->find($uriVariables['id']);
-                $user->removeBook($book);
-                $book->removeUser($user);
+                $book->removeUser($data);
                 $this->entityManager->flush();
-                return $user;
+                return $data;
             }
         } else {
             if ($data instanceof User) {
                 foreach($data->getBooks() as $index => $bookData) {
                     $bookData->addUser($data);
-                    $this->entityManager->persist($bookData);
                 }
-                $this->entityManager->persist($data);
                 $this->entityManager->flush();
             }
         }
