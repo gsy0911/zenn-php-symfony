@@ -68,10 +68,8 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
                 "id" => new Link(fromClass: User::class),
                 "bookId" => new Link(fromClass: Book::class),
             ],
-            denormalizationContext: ["groups" => ["user-book:delete"]],
-//            provider: UserProvider::class,
-//            processor: UserBookProcessor::class,
-
+            provider: UserProvider::class,
+            processor: UserBookProcessor::class,
         ),
     ],
     normalizationContext: ["groups" => ["user:get"]],
