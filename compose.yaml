@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   
   php:
@@ -7,6 +5,7 @@ services:
       context: docker/php
     container_name: zenn-php-symfony
     restart: unless-stopped
+    platform: linux/arm64
     volumes:
       - ./backend/src:/var/www/zenn_example
     healthcheck:
@@ -67,3 +66,17 @@ services:
       options:
         max-file: '1'
         max-size: 3m
+
+  mercure:
+    image: dunglas/mercure
+    restart: unless-stopped
+    environment:
+      SERVER_NAME: ':3000'
+      MERCURE_PUBLISHER_JWT_KEY: 'Br4K8LyTiXj41SOUwNRquSVJRDlDX6i2DXcytmFTaY='
+      MERCURE_SUBSCRIBER_JWT_KEY: 'Br4K8LyTiXj41SOUwNRquSVJRDlDX6i2DXcytmFTaY='
+      MERCURE_EXTRA_DIRECTIVES: |
+        cors_origins *
+        anonymous
+        publish_origins *
+    ports:
+      - '3308:3000'
